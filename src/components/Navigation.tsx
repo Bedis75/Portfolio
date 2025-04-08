@@ -126,15 +126,15 @@ const Navigation: React.FC = () => {
           <RightSection>
             <NavList>
               <NavItem>
-                <a href="#home" onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection('home');
-                }}>About</a>
-              </NavItem>
-              <NavItem>
                 <a href="#about" onClick={(e) => {
                   e.preventDefault();
                   scrollToSection('about');
+                }}>About</a>
+              </NavItem>
+              <NavItem>
+                <a href="#projects" onClick={(e) => {
+                  e.preventDefault();
+                  scrollToSection('projects');
                 }}>Projects</a>
               </NavItem>
               <NavItem>
@@ -161,16 +161,16 @@ const Navigation: React.FC = () => {
         <RightSection>
           <NavList>
             <NavItem>
-              <a href="#home" onClick={(e) => {
-                e.preventDefault();
-                scrollToSection('home');
-              }}>Home</a>
-            </NavItem>
-            <NavItem>
               <a href="#about" onClick={(e) => {
                 e.preventDefault();
                 scrollToSection('about');
               }}>About</a>
+            </NavItem>
+            <NavItem>
+              <a href="#projects" onClick={(e) => {
+                e.preventDefault();
+                scrollToSection('projects');
+              }}>Projects</a>
             </NavItem>
             <NavItem>
               <a href="#skills" onClick={(e) => {

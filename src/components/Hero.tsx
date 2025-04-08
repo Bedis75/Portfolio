@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import profileImg from '../assets/profile.png';
+import CV from '../assets/CV_Bedis-Bensaid.pdf';
 
 const Section = styled.section`
   min-height: 100vh;
@@ -9,6 +10,10 @@ const Section = styled.section`
   justify-content: center;
   padding: 6rem 4rem 4rem;
   scroll-margin-top: 70px;
+
+  @media (max-width: 768px) {
+    padding: 4rem 2rem 2rem;
+  }
 `;
 
 const HeroSection = styled(Section)`
@@ -19,24 +24,23 @@ const HeroSection = styled(Section)`
   justify-content: center;
 `;
 
-const AboutSection = styled(Section)`
-  background: ${({ theme }) => theme.background};
-`;
-
-const SkillsSection = styled(Section)`
-  background: ${({ theme }) => `rgba(${theme.primary}, 0.05)`};
-`;
-
-const ContactSection = styled(Section)`
-  background: ${({ theme }) => theme.background};
-`;
-
 const Name = styled.h1`
   font-size: 5rem;
   margin-bottom: 1rem;
   font-weight: 700;
   display: flex;
   gap: 1rem;
+  
+  @media (max-width: 1024px) {
+    font-size: 4rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 3rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
   
   span:first-child {
     color: ${({ theme }) => theme.primary};
@@ -51,6 +55,11 @@ const Title = styled.div`
   font-size: 2rem;
   margin-bottom: 2rem;
   color: ${({ theme }) => theme.text};
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    text-align: center;
+  }
   
   span {
     color: ${({ theme }) => theme.primary};
@@ -75,38 +84,29 @@ const TypedText = styled.span`
   }
 `;
 
-const ContactInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 2rem;
-  font-size: 1.1rem;
-  align-self: flex-start;
+const CVButton = styled.a`
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  width:150px;
+  min-width: 90px;
+  background-color: ${({ theme }) => theme.primary};
+  color: #fff;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+  transition: all 0.3s ease;
   
-  a {
-    color: ${({ theme }) => theme.text};
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    
-    i {
-      color: ${({ theme }) => theme.primary};
-      width: 20px;
-    }
-    
-    &:hover {
-      color: ${({ theme }) => theme.primary};
-      transform: translateX(5px);
-    }
+  i {
+    margin-left: 0.3rem;
+    font-size: 0.8rem;
   }
-`;
-
-const SectionTitle = styled.h2`
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  color: ${({ theme }) => theme.primary};
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
 `;
 
 const SocialLinks = styled.div`
@@ -117,6 +117,16 @@ const SocialLinks = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  
+  @media (max-width: 768px) {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 2rem;
+  }
   
   a {
     color: ${({ theme }) => theme.text};
@@ -140,6 +150,16 @@ const ContactLinks = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   
+  @media (max-width: 768px) {
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
   a {
     color: ${({ theme }) => theme.text};
     text-decoration: none;
@@ -154,13 +174,23 @@ const ContactLinks = styled.div`
 `;
 
 const ProfileImage = styled.img`
-  width: 710px;
+  width: 430px;
   height: auto;
   border-radius: 10px;
   transition: transform 0.3s ease;
-  margin-right: -10rem;
-  margin-top: -6rem;
-  margin-left: -15rem;
+  margin-left: -20rem;
+  
+  @media (max-width: 1200px) {
+    width: 500px;
+    margin-right: -5rem;
+    margin-left: -10rem;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 0 2rem 0;
+  }
   
   &:hover {
     transform: scale(1.02);
@@ -171,109 +201,98 @@ const ContentWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0;
-  text-align: left;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+    padding: 0 1rem;
+  }
 `;
 
 const TextContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding-left: 0;
+  margin-left: 2rem;
+  
+  @media (max-width: 768px) {
+    margin-left: 0;
+    margin-top: 2rem;
+  }
 `;
 
 const Hero: React.FC = () => {
   const [text, setText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [loopNum, setLoopNum] = useState(0);
-  const roles = ['Web Developer.', 'Designer.'];
-  const period = 2000;
-  const typingSpeed = 70;
+  const roles = ['Web Developer', 'Designer'];
+  const period = 1500;
+  const typingSpeed = 80;
   const deletingSpeed = 30;
 
   useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
-    const role = roles[loopNum % roles.length];
+    let ticker = setInterval(() => {
+      tick();
+    }, isDeleting ? deletingSpeed : typingSpeed);
 
-    if (isDeleting) {
-      timer = setTimeout(() => {
-        setText(role.substring(0, text.length - 1));
-      }, deletingSpeed);
-    } else {
-      timer = setTimeout(() => {
-        setText(role.substring(0, text.length + 1));
-      }, typingSpeed);
-    }
+    return () => { clearInterval(ticker) };
+  });
 
-    if (!isDeleting && text === role) {
-      timer = setTimeout(() => setIsDeleting(true), period);
-    } else if (isDeleting && text === '') {
+  const tick = () => {
+    const i = loopNum % roles.length;
+    const fullText = roles[i];
+    const updatedText = isDeleting 
+      ? fullText.substring(0, text.length - 1)
+      : fullText.substring(0, text.length + 1);
+
+    setText(updatedText);
+
+    if (!isDeleting && updatedText === fullText) {
+      setTimeout(() => setIsDeleting(true), period);
+    } else if (isDeleting && updatedText === '') {
       setIsDeleting(false);
       setLoopNum(loopNum + 1);
     }
-
-    return () => clearTimeout(timer);
-  }, [text, isDeleting, loopNum]);
+  };
 
   return (
-    <>
-      <HeroSection id="home">
-        <ContentWrapper>
-          <ProfileImage src={profileImg} alt="Bedis BENSAID" />
-          <TextContent>
-            <Name>
-              <span>Bedis</span>
-              <span>BENSAID</span>
-            </Name>
-            <Title>
-              I'm a <TypedText>{text}</TypedText>
-            </Title>
-          </TextContent>
-        </ContentWrapper>
-        <SocialLinks>
-          <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-            <i className="fab fa-instagram"></i>
-          </a>
-          <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-            <i className="fab fa-facebook"></i>
-          </a>
-          <a href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-            <i className="fab fa-linkedin-in"></i>
-          </a>
-        </SocialLinks>
-        <ContactLinks>
-          <a href="tel:+1234567890" aria-label="Phone">
-            <i className="fas fa-phone"></i>
-          </a>
-          <a href="mailto:contact@example.com" aria-label="Email">
-            <i className="far fa-envelope"></i>
-          </a>
-        </ContactLinks>
-      </HeroSection>
-
-      <AboutSection id="about">
-        <SectionTitle>About Me</SectionTitle>
-        <p>Passionate about technology and leadership, I specialize in guiding teams and delivering exceptional results in tech projects.</p>
-      </AboutSection>
-
-      <SkillsSection id="work">
-        <SectionTitle>Work</SectionTitle>
-        <p>Showcase of my projects and professional experience.</p>
-      </SkillsSection>
-
-      <ContactSection id="contact">
-        <SectionTitle>Contact</SectionTitle>
-        <ContactInfo>
-          <a href="#" target="_blank" rel="noopener noreferrer">
-            <i className="fab fa-linkedin-in"></i>
-            Connect with me on LinkedIn
-          </a>
-          <a href="mailto:contact@example.com">
-            <i className="far fa-envelope"></i>
-            contact@example.com
-          </a>
-        </ContactInfo>
-      </ContactSection>
-    </>
+    <HeroSection id="home">
+      <ContentWrapper>
+        <ProfileImage src={profileImg} alt="Bedis BENSAID" />
+        <TextContent>
+          <Name>
+            <span>Bedis</span>
+            <span>BENSAID</span>
+          </Name>
+          <Title>
+            I'm a <TypedText>{text}</TypedText>
+          </Title>
+          <CVButton href={CV} target="_blank" rel="noopener noreferrer">
+            MY CV <i className="fas fa-download"></i>
+          </CVButton>
+        </TextContent>
+      </ContentWrapper>
+      <SocialLinks>
+        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <i className="fab fa-instagram"></i>
+        </a>
+        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+          <i className="fab fa-facebook"></i>
+        </a>
+        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+          <i className="fab fa-linkedin-in"></i>
+        </a>
+      </SocialLinks>
+      <ContactLinks>
+        <a href="tel:+1234567890" aria-label="Phone">
+          <i className="fas fa-phone"></i>
+        </a>
+        <a href="mailto:contact@example.com" aria-label="Email">
+          <i className="far fa-envelope"></i>
+        </a>
+      </ContactLinks>
+    </HeroSection>
   );
 };
 

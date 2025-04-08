@@ -7,6 +7,10 @@ const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
       'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -17,6 +21,19 @@ const GlobalStyles = createGlobalStyle`
     color: ${({ theme }) => theme.text};
     line-height: 1.6;
     transition: all 0.3s ease;
+    overflow-x: hidden;
+  }
+
+  main {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+  }
+
+  section {
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
   }
 
   a {
