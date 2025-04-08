@@ -129,13 +129,13 @@ const Navigation: React.FC = () => {
                 <a href="#home" onClick={(e) => {
                   e.preventDefault();
                   scrollToSection('home');
-                }}>Home</a>
+                }}>About</a>
               </NavItem>
               <NavItem>
                 <a href="#about" onClick={(e) => {
                   e.preventDefault();
                   scrollToSection('about');
-                }}>About</a>
+                }}>Projects</a>
               </NavItem>
               <NavItem>
                 <a href="#skills" onClick={(e) => {

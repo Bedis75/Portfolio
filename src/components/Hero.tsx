@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import profileImg from '../assets/profile.png';
 
 const Section = styled.section`
   min-height: 100vh;
@@ -36,7 +37,6 @@ const Name = styled.h1`
   font-weight: 700;
   display: flex;
   gap: 1rem;
-  justify-content: center;
   
   span:first-child {
     color: ${({ theme }) => theme.primary};
@@ -51,7 +51,6 @@ const Title = styled.div`
   font-size: 2rem;
   margin-bottom: 2rem;
   color: ${({ theme }) => theme.text};
-  text-align: center;
   
   span {
     color: ${({ theme }) => theme.primary};
@@ -61,6 +60,7 @@ const Title = styled.div`
 const TypedText = styled.span`
   color: ${({ theme }) => theme.primary};
   position: relative;
+  font-weight: 600;
   
   &::after {
     content: '|';
@@ -153,14 +153,42 @@ const ContactLinks = styled.div`
   }
 `;
 
+const ProfileImage = styled.img`
+  width: 710px;
+  height: auto;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+  margin-right: -10rem;
+  margin-top: -6rem;
+  margin-left: -15rem;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+`;
+
+const ContentWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  text-align: left;
+`;
+
+const TextContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding-left: 0;
+`;
+
 const Hero: React.FC = () => {
   const [text, setText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [loopNum, setLoopNum] = useState(0);
-  const roles = ['Web Developer', 'Designer'];
+  const roles = ['Web Developer.', 'Designer.'];
   const period = 2000;
-  const typingSpeed = 150;
-  const deletingSpeed = 50;
+  const typingSpeed = 70;
+  const deletingSpeed = 30;
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
@@ -189,13 +217,18 @@ const Hero: React.FC = () => {
   return (
     <>
       <HeroSection id="home">
-        <Name>
-          <span>Bedis</span>
-          <span>BENSAID</span>
-        </Name>
-        <Title>
-          I'm a <TypedText>{text}</TypedText>
-        </Title>
+        <ContentWrapper>
+          <ProfileImage src={profileImg} alt="Bedis BENSAID" />
+          <TextContent>
+            <Name>
+              <span>Bedis</span>
+              <span>BENSAID</span>
+            </Name>
+            <Title>
+              I'm a <TypedText>{text}</TypedText>
+            </Title>
+          </TextContent>
+        </ContentWrapper>
         <SocialLinks>
           <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
             <i className="fab fa-instagram"></i>
