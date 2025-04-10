@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import profileImg from '../assets/profile.png';
-import CV from '../assets/CV_Bedis-Bensaid.pdf';
+import { Canvas } from '@react-three/fiber';
+import Model3D from './Model3D';
 
 const Section = styled.section`
   min-height: 100vh;
@@ -22,14 +22,18 @@ const HeroSection = styled(Section)`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  overflow: hidden;
 `;
 
 const Name = styled.h1`
   font-size: 5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   font-weight: 700;
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
+  justify-content: center;
+  width: 100%;
   
   @media (max-width: 1024px) {
     font-size: 4rem;
@@ -37,9 +41,9 @@ const Name = styled.h1`
 
   @media (max-width: 768px) {
     font-size: 3rem;
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.5rem;
-    text-align: center;
+    justify-content: center;
   }
   
   span:first-child {
@@ -52,12 +56,14 @@ const Name = styled.h1`
 `;
 
 const Title = styled.div`
-  font-size: 2rem;
-  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
   color: ${({ theme }) => theme.text};
+  text-align: center;
+  width: 100%;
   
   @media (max-width: 768px) {
-    font-size: 1.5rem;
+    font-size: 2rem;
     text-align: center;
   }
   
@@ -86,21 +92,22 @@ const TypedText = styled.span`
 
 const CVButton = styled.a`
   display: inline-block;
-  padding: 0.6rem 1rem;
-  width:150px;
-  min-width: 90px;
+  padding: 0.8rem 2rem;
+  width: auto;
+  min-width: 150px;
   background-color: ${({ theme }) => theme.primary};
   color: #fff;
   border-radius: 5px;
   text-decoration: none;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1rem;
   text-align: center;
   transition: all 0.3s ease;
+  text-transform: uppercase;
   
   i {
-    margin-left: 0.3rem;
-    font-size: 0.8rem;
+    margin-left: 0.5rem;
+    font-size: 0.9rem;
   }
   
   &:hover {
@@ -117,6 +124,7 @@ const SocialLinks = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  z-index: 3;
   
   @media (max-width: 768px) {
     position: relative;
@@ -133,6 +141,7 @@ const SocialLinks = styled.div`
     text-decoration: none;
     font-size: 1.5rem;
     transition: all 0.3s ease;
+    cursor: pointer;
     
     &:hover {
       color: ${({ theme }) => theme.primary};
@@ -149,6 +158,7 @@ const ContactLinks = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  z-index: 3;
   
   @media (max-width: 768px) {
     position: relative;
@@ -165,6 +175,7 @@ const ContactLinks = styled.div`
     text-decoration: none;
     font-size: 1.5rem;
     transition: all 0.3s ease;
+    cursor: pointer;
     
     &:hover {
       color: ${({ theme }) => theme.primary};
@@ -173,52 +184,52 @@ const ContactLinks = styled.div`
   }
 `;
 
-const ProfileImage = styled.img`
-  width: 430px;
-  height: auto;
-  border-radius: 10px;
-  transition: transform 0.3s ease;
-  margin-left: -20rem;
-  
-  @media (max-width: 1200px) {
-    width: 500px;
-    margin-right: -5rem;
-    margin-left: -10rem;
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
-    max-width: 400px;
-    margin: 0 0 2rem 0;
-  }
-  
-  &:hover {
-    transform: scale(1.02);
-  }
-`;
-
-const ContentWrapper = styled.div`
+const HeroContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
+  max-width: 1400px;
+  margin: 0;
+  padding: 0;
+  position: relative;
   
   @media (max-width: 768px) {
     flex-direction: column;
-    text-align: center;
-    padding: 0 1rem;
+    align-items: center;
+    padding: 0;
   }
 `;
 
 const TextContent = styled.div`
-  margin-left: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  width: 100%;
   
   @media (max-width: 768px) {
-    margin-left: 0;
-    margin-top: 2rem;
+    align-items: center;
+  }
+`;
+
+const ModelContainer = styled.div`
+  width: 1500px;
+  height: 1500px;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: 80%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  pointer-events: none;
+  
+  @media (max-width: 768px) {
+    width: 400px;
+    height: 400px;
+    left: 50%;
   }
 `;
 
@@ -258,8 +269,14 @@ const Hero: React.FC = () => {
 
   return (
     <HeroSection id="home">
-      <ContentWrapper>
-        <ProfileImage src={profileImg} alt="Bedis BENSAID" />
+      <HeroContent>
+        <ModelContainer>
+          <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+            <ambientLight intensity={0.5} />
+            <pointLight position={[10, 10, 10]} />
+            <Model3D />
+          </Canvas>
+        </ModelContainer>
         <TextContent>
           <Name>
             <span>Bedis</span>
@@ -268,11 +285,11 @@ const Hero: React.FC = () => {
           <Title>
             I'm a <TypedText>{text}</TypedText>
           </Title>
-          <CVButton href={CV} target="_blank" rel="noopener noreferrer">
+          <CVButton href="/assets/CV_Bedis-Bensaid.pdf" target="_blank" rel="noopener noreferrer">
             MY CV <i className="fas fa-download"></i>
           </CVButton>
         </TextContent>
-      </ContentWrapper>
+      </HeroContent>
       <SocialLinks>
         <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
           <i className="fab fa-instagram"></i>
@@ -285,10 +302,10 @@ const Hero: React.FC = () => {
         </a>
       </SocialLinks>
       <ContactLinks>
-        <a href="tel:+1234567890" aria-label="Phone">
+        <a href="tel:+21697788637" aria-label="Phone">
           <i className="fas fa-phone"></i>
         </a>
-        <a href="mailto:contact@example.com" aria-label="Email">
+        <a href="mailto:bedisbensaid7@gmail.com" aria-label="Email">
           <i className="far fa-envelope"></i>
         </a>
       </ContactLinks>
