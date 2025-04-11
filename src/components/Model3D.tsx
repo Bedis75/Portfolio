@@ -46,7 +46,7 @@ const Model3D: React.FC = () => {
     };
   }, [isDragging, mouse]);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (groupRef.current) {
       if (!isDragging) {
         setRotation(prev => ({
