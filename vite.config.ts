@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   assetsInclude: ['**/*.glb', '**/*.gltf', '**/*.pdf'],
@@ -12,5 +12,10 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+  },
+  resolve: {
+    alias: {
+      '@': '/src',
+    },
   },
 })
