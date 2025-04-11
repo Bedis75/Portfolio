@@ -2,13 +2,14 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import { Group } from 'three';
+import laptopModel from '../assets/3D_Laptop.glb';
 
 const Model3D: React.FC = () => {
   const groupRef = useRef<Group>(null);
   const [rotation, setRotation] = useState({ x: 0.3, y: 0, z: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
-  const { scene } = useGLTF('/src/assets/3D_Laptop.glb');
+  const { scene } = useGLTF(laptopModel);
 
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {

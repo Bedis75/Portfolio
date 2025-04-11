@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Canvas } from '@react-three/fiber';
 import Model3D from './Model3D';
+import profileImage from '../assets/profile.png';
+import cvFile from '../assets/CV_Bedis-Bensaid.pdf';
 
 const Section = styled.section`
   min-height: 100vh;
@@ -409,7 +411,7 @@ const Hero: React.FC = () => {
         </ModelContainer>
         <ContentWrapper>
           <ProfileContainer>
-            <img src="/src/assets/profile.png" alt="Profile" />
+            <img src={profileImage} alt="Profile" />
           </ProfileContainer>
           <TextContent>
             <Name>
@@ -419,7 +421,7 @@ const Hero: React.FC = () => {
             <Title>
               I'm a <TypedText>{text}</TypedText>
             </Title>
-            <CVButton href="/src/assets/CV_Bedis-Bensaid.pdf" target="_blank" rel="noopener noreferrer">
+            <CVButton href={cvFile} target="_blank" rel="noopener noreferrer">
               MY CV <i className="fas fa-download"></i>
             </CVButton>
           </TextContent>
