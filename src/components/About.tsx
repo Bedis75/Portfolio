@@ -69,10 +69,6 @@ const Motto = styled.p`
 `;
 
 const About: React.FC = () => {
-  const technologies = [
-    "React", "Next.js", "Node.js", "Flutter", 
-    "MongoDB", "MySQL"
-  ];
 
   return (
     <Section id="about">

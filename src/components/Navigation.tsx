@@ -2,91 +2,109 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTheme } from '../context/ThemeContext';
 
-const Nav = styled.nav<{ isScrolled: boolean; direction: 'up' | 'down' }>`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 70px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 4rem;
-  background: ${({ theme, isScrolled }) => isScrolled ? theme.background : 'transparent'};
-  box-shadow: ${({ isScrolled }) => isScrolled ? '0 2px 10px rgba(0, 0, 0, 0.1)' : 'none'};
-  z-index: 1000;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: ${({ isScrolled }) => isScrolled ? 'blur(10px)' : 'none'};
-  border-bottom: ${({ isScrolled }) => isScrolled ? '1px solid rgba(255, 255, 255, 0.1)' : 'none'};
-  transform: translateY(${({ isScrolled, direction }) => {
-    if (!isScrolled) return '-100%';
-    if (direction === 'up') return '-100%';
-    return '0';
-  }});
-  visibility: ${({ isScrolled }) => isScrolled ? 'visible' : 'hidden'};
-  opacity: ${({ isScrolled }) => isScrolled ? '1' : '0'};
-`;
-
-const TransparentNav = styled.nav`
+const TopNav = styled.nav`
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 70px;
+  padding: 1rem 2rem;
+  background: transparent;
+  z-index: 999;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 4rem;
-  z-index: 999;
 `;
 
-const Logo = styled.div`
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: ${({ theme }) => theme.mode === 'light' ? '#000000' : theme.primary};
-`;
-
-const RightSection = styled.div`
+const Nav = styled.nav<{ isScrolled: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 2rem;
+  background: ${({ theme }) => `${theme.background}ff`};
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 2rem;
+  transition: transform 0.3s ease;
+  transform: translateY(${({ isScrolled }) => isScrolled ? '0' : '-100%'});
 `;
 
-const NavList = styled.ul`
+const BrandLogo = styled.a`
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: ${({ theme }) => theme.mode === 'light' ? '#000' : theme.primary};
+  text-decoration: none;
   display: flex;
-  gap: 2rem;
-  list-style: none;
-`;
-
-const NavItem = styled.li`
-  a {
-    color: ${({ theme }) => theme.text};
-    text-decoration: none;
-    font-size: 1.1rem;
-    font-weight: 500;
-    transition: color 0.3s ease;
-    
-    &:hover {
-      color: ${({ theme }) => theme.primary};
-    }
-
-    &.active {
-      color: ${({ theme }) => theme.primary};
-    }
+  gap: 0.3rem;
+  
+  span {
+    color: ${({ theme }) => theme.mode === 'light' ? '#000' : theme.primary};
   }
 `;
 
-const ThemeToggle = styled.button`
+const NavLinks = styled.div<{ isOpen: boolean }>`
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    position: fixed;
+    top: 70px;
+    right: ${({ isOpen }) => (isOpen ? '0' : '-100%')};
+    flex-direction: column;
+    background: ${({ theme }) => theme.background};
+    padding: 2rem;
+    width: 60%;
+    height: calc(100vh - 70px);
+    transition: right 0.3s ease;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    gap: 1.5rem;
+    backdrop-filter: blur(10px);
+  }
+`;
+
+const NavLink = styled.a`
+  color: ${({ theme }) => theme.text};
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: ${({ theme }) => theme.primary};
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
+`;
+
+const MenuButton = styled.button`
+  display: none;
   background: none;
   border: none;
   color: ${({ theme }) => theme.text};
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   cursor: pointer;
   padding: 0.5rem;
-  transition: color 0.3s ease;
-  display: flex;
-  align-items: center;
   
+  @media (max-width: 768px) {
+    display: block;
+  }
+`;
+
+const ThemeButton = styled.button`
+  background: none;
+  border: none;
+  color: ${({ theme }) => theme.text};
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-left: 1rem;
+  transition: color 0.3s ease;
+
   &:hover {
     color: ${({ theme }) => theme.primary};
   }
@@ -94,101 +112,66 @@ const ThemeToggle = styled.button`
 
 const Navigation: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down');
-  const [lastScroll, setLastScroll] = useState(0);
-  
+
   useEffect(() => {
     const handleScroll = () => {
-      const offset = window.scrollY;
-      const direction = offset > lastScroll ? 'down' : 'up';
-      setScrollDirection(direction);
-      setLastScroll(offset);
-      setIsScrolled(offset > 200);
+      setIsScrolled(window.scrollY > 500);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScroll]);
+  }, []);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   return (
     <>
-      {!isScrolled && (
-        <TransparentNav>
-          <Logo>BEDIS BENSAID.</Logo>
-          <RightSection>
-            <NavList>
-              <NavItem>
-                <a href="#about" onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection('about');
-                }}>About</a>
-              </NavItem>
-              <NavItem>
-                <a href="#projects" onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection('projects');
-                }}>Projects</a>
-              </NavItem>
-              <NavItem>
-                <a href="#skills" onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection('skills');
-                }}>Skills</a>
-              </NavItem>
-              <NavItem>
-                <a href="#contact" onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection('contact');
-                }}>Contact</a>
-              </NavItem>
-            </NavList>
-            <ThemeToggle onClick={toggleTheme} aria-label="Toggle theme">
-              {theme === 'light' ? '☼' : '☾'}
-            </ThemeToggle>
-          </RightSection>
-        </TransparentNav>
-      )}
-      <Nav isScrolled={isScrolled} direction={scrollDirection}>
-        <Logo>BEDIS BENSAID.</Logo>
-        <RightSection>
-          <NavList>
-            <NavItem>
-              <a href="#about" onClick={(e) => {
-                e.preventDefault();
-                scrollToSection('about');
-              }}>About</a>
-            </NavItem>
-            <NavItem>
-              <a href="#projects" onClick={(e) => {
-                e.preventDefault();
-                scrollToSection('projects');
-              }}>Projects</a>
-            </NavItem>
-            <NavItem>
-              <a href="#skills" onClick={(e) => {
-                e.preventDefault();
-                scrollToSection('skills');
-              }}>Skills</a>
-            </NavItem>
-            <NavItem>
-              <a href="#contact" onClick={(e) => {
-                e.preventDefault();
-                scrollToSection('contact');
-              }}>Contact</a>
-            </NavItem>
-          </NavList>
-          <ThemeToggle onClick={toggleTheme} aria-label="Toggle theme">
+      <TopNav>
+        <BrandLogo href="#home">
+          <span>BEDIS</span>
+          <span>BENSAID.</span>
+        </BrandLogo>
+        
+        <MenuButton onClick={toggleMenu}>
+          <i className={`fas fa-${isMenuOpen ? 'times' : 'bars'}`}></i>
+        </MenuButton>
+        
+        <NavLinks isOpen={isMenuOpen}>
+          <NavLink href="#home" onClick={() => setIsMenuOpen(false)}>Home</NavLink>
+          <NavLink href="#about" onClick={() => setIsMenuOpen(false)}>About</NavLink>
+          <NavLink href="#skills" onClick={() => setIsMenuOpen(false)}>Skills</NavLink>
+          <NavLink href="#projects" onClick={() => setIsMenuOpen(false)}>Projects</NavLink>
+          <NavLink href="#contact" onClick={() => setIsMenuOpen(false)}>Contact</NavLink>
+          <ThemeButton onClick={toggleTheme} aria-label="Toggle theme">
             {theme === 'light' ? '☼' : '☾'}
-          </ThemeToggle>
-        </RightSection>
+          </ThemeButton>
+        </NavLinks>
+      </TopNav>
+
+      <Nav isScrolled={isScrolled}>
+        <BrandLogo href="#home">
+          <span>BEDIS</span>
+          <span>BENSAID.</span>
+        </BrandLogo>
+        
+        <MenuButton onClick={toggleMenu}>
+          <i className={`fas fa-${isMenuOpen ? 'times' : 'bars'}`}></i>
+        </MenuButton>
+        
+        <NavLinks isOpen={isMenuOpen}>
+          <NavLink href="#home" onClick={() => setIsMenuOpen(false)}>Home</NavLink>
+          <NavLink href="#about" onClick={() => setIsMenuOpen(false)}>About</NavLink>
+          <NavLink href="#skills" onClick={() => setIsMenuOpen(false)}>Skills</NavLink>
+          <NavLink href="#projects" onClick={() => setIsMenuOpen(false)}>Projects</NavLink>
+          <NavLink href="#contact" onClick={() => setIsMenuOpen(false)}>Contact</NavLink>
+          <ThemeButton onClick={toggleTheme} aria-label="Toggle theme">
+            {theme === 'light' ? '☼' : '☾'}
+          </ThemeButton>
+        </NavLinks>
       </Nav>
     </>
   );
